@@ -16,11 +16,11 @@ ini_set('max_execution_time', '300');
     	<h1>YouTube Parser for Slow Computers</h1>
 			<form action="" method="get">
 				<label for="url">Enter YouTube video URL:</label>
-				<input type="text" name="url" id="url" />
+				<input type="text" name="url" id="url" value="<?php echo isset($_GET['url']) ? $_GET['url'] : '' ?>" />
 				<input type="submit" value="Submit" />
 			</form>
 
-			<?php if ($_GET['url'] != '') {
+			<?php if (isset($_GET['url']) && $_GET['url'] != '') {
 
 				echo "<h2>Parsing ".$_GET['url']."</h2>";
 
@@ -31,7 +31,7 @@ ini_set('max_execution_time', '300');
 				$file_name = md5($url);
 
 				exec('youtube-dl -f 133 -o '.$file_name.'/video.mp4 '.$url, $output, $ret);
-				if ($ret == 1) { echo "<p><strong>Error downloading video (check URL)</strong></p>"; }
+				if ($ret == 1) { echo "<p><strong>Error downloading video (check URL)</strong><br><pre>".var_dump($output)."</pre></p>"; }
 
 				if ($ret != 1 && !empty($output)) {
 					exec('ffmpeg -i '.$file_name.'/video.mp4 -vf "scale=320:-1,fps=1/30" '.$file_name.'/i_%d.jpg', $output, $ret);
